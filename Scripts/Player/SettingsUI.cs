@@ -49,6 +49,14 @@ namespace Game.Scenes.UI
             SaveChangesDialog = GetNode<PopupDialog>("SaveChangesDialog");
         }
 
+        public override void _Input(InputEvent @event)
+        {
+            base._Input(@event);
+            //TODO: Make it so settings can be exited with ui_cancel, right now it closes the UI but then the player
+            //picks up on the input and loops directly back to the UI opening
+            //if (Visible && @event.IsActionPressed("ui_cancel")) { ResumeButtonPressed(); }
+        }
+
         // - - Importing and managing settings data - - 
         public void ImportSettings(Player player)
         {
@@ -58,13 +66,16 @@ namespace Game.Scenes.UI
             MoveSpeedBox.Value = player.MoveSpeed;
             JumpHeightBox.Value = player.JumpHeight;
             HoldDistanceBox.Value = player.ObjectHoldDistance;
+            ChangesMade = false;
         }
 
         // - - Signals - - 
+        public void SettingValueChanged(float value) => ChangesMade = true;
+
         public void ResumeButtonPressed()
         {
             //If there are changes, ask to save them, otherwise return to game
-            if(ChangesMade) { SaveChangesDialog.PopupCenteredRatio(); }
+            if(ChangesMade) { SaveChangesDialog.PopupCentered(); }
             else { PlayerParent.ApplySettings(this, false, true); }
         }
 
@@ -74,9 +85,21 @@ namespace Game.Scenes.UI
             GetTree().Quit();
         }
 
-        public void ApplyButtonPressed() => PlayerParent.ApplySettings(this, true, false);
+        public void ApplyButtonPressed()
+        {
+            PlayerParent.ApplySettings(this, true, false);
+            ChangesMade = false;
+        }
 
-        public void PopupSaveButtonPressed() => PlayerParent.ApplySettings(this, true, true);
-        public void PopupCancelButtonPressed() => PlayerParent.ApplySettings(this, false, true);
+        public void PopupSaveButtonPressed()
+        {
+            PlayerParent.ApplySettings(this, true, true);
+            SaveChangesDialog.Visible = false;
+        }
+        public void PopupCancelButtonPressed()
+        {
+            PlayerParent.ApplySettings(this, false, true);
+            SaveChangesDialog.Visible = false;
+        }
     }
 }

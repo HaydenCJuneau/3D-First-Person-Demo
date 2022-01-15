@@ -63,7 +63,6 @@ height = 0.201
 depth = 0.877
 
 [node name="FirstPersonUI" type="Control" parent="Head/Camera/Direction"]
-visible = false
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -125,6 +124,7 @@ __meta__ = {
 
 [node name="SettingsUI" type="Control" parent="Head/Camera/Direction"]
 pause_mode = 2
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 5 )
@@ -199,6 +199,8 @@ __meta__ = {
 margin_top = 312.0
 margin_right = 320.0
 margin_bottom = 412.0
+step = 0.001
+allow_greater = true
 prefix = "Sensitivity:"
 
 [node name="MoveSpeedBox" type="SpinBox" parent="Head/Camera/Direction/SettingsUI"]
@@ -231,7 +233,7 @@ margin_right = 320.0
 margin_bottom = 820.0
 max_value = 1.0
 allow_greater = true
-prefix = "Move Speed:"
+prefix = "Hold Distance:"
 
 [node name="SaveChangesDialog" type="PopupDialog" parent="Head/Camera/Direction/SettingsUI"]
 margin_right = 280.0
@@ -266,5 +268,10 @@ text = "Cancel"
 [connection signal="pressed" from="Head/Camera/Direction/SettingsUI/ResumeButton" to="Head/Camera/Direction/SettingsUI" method="ResumeButtonPressed"]
 [connection signal="pressed" from="Head/Camera/Direction/SettingsUI/ExitButton" to="Head/Camera/Direction/SettingsUI" method="ExitButtonPressed"]
 [connection signal="pressed" from="Head/Camera/Direction/SettingsUI/ApplyButton" to="Head/Camera/Direction/SettingsUI" method="ApplyButtonPressed"]
+[connection signal="value_changed" from="Head/Camera/Direction/SettingsUI/FOVBox" to="Head/Camera/Direction/SettingsUI" method="SettingValueChanged"]
+[connection signal="value_changed" from="Head/Camera/Direction/SettingsUI/SensitivityBox" to="Head/Camera/Direction/SettingsUI" method="SettingValueChanged"]
+[connection signal="value_changed" from="Head/Camera/Direction/SettingsUI/MoveSpeedBox" to="Head/Camera/Direction/SettingsUI" method="SettingValueChanged"]
+[connection signal="value_changed" from="Head/Camera/Direction/SettingsUI/JumpHeightBox" to="Head/Camera/Direction/SettingsUI" method="SettingValueChanged"]
+[connection signal="value_changed" from="Head/Camera/Direction/SettingsUI/HoldDistanceBox" to="Head/Camera/Direction/SettingsUI" method="SettingValueChanged"]
 [connection signal="pressed" from="Head/Camera/Direction/SettingsUI/SaveChangesDialog/PopupSaveButton" to="Head/Camera/Direction/SettingsUI" method="PopupSaveButtonPressed"]
-[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/SaveChangesDialog/PopupCancelButton" to="Head/Camera/Direction/SettingsUI" method="PopupCanelButtonPressed"]
+[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/SaveChangesDialog/PopupCancelButton" to="Head/Camera/Direction/SettingsUI" method="PopupCancelButtonPressed"]
