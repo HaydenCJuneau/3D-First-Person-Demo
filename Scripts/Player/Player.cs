@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using Game.Systems.Interaction;
+using Game.Scenes.UI;
 
 namespace Game.Entities
 {
@@ -8,36 +9,43 @@ namespace Game.Entities
     {
         // - - Player stats - - 
 
-        //Physics stats
-        [Export] public float MoveSpeed { get; private set; } = 25;
-        [Export] public float SprintBoost { get; private set; } = 10;
-        [Export] public float JumpHeight { get; private set; } = 5;
+        //--Physics stats
+        public float MoveSpeed { get; private set; } = 25;
+        public float SprintBoost { get; private set; } = 10;
+        public float JumpHeight { get; private set; } = 5;
         private float Acceleration { get; set; } = 20;
 
-        //Physics state of player in current frame
+        //--Physics state of player in current frame
         public Vector3 TickVelocity { get; private set; } = Vector3.Zero;
         private bool TickOnFloor { get; set; } //Is the player on the ground in the current physics tick
         public bool TickSprinting { get; private set; } //Is the player sprinting in the current physics tick
         public bool TickMoving { get; private set; } //Is the player moving in the current physics tick
 
-        //Control values
-        public float CameraSpeed { get; set; } = 0.1f;
+        //--Control values
+        public float CameraSensitivity { get; private set; } = 0.1f;
+        public float CameraFOV { 
+            get { return FPCamera.Fov; } 
+            private set { FPCamera.Fov = value; } 
+        }
 
-        //Interactivity values
-        [Export] public float ObjectThrowForce { get; private set; } = 120;
-        private float ObjectGrabDistance { get; set; } = 5;
+        //--Interactivity values
+        public float ObjectThrowForce { get; private set; } = 120;
+        public float ObjectHoldDistance { get; private set; } = 5;
         public bool HoldingItem { get { return HeldItemInterface != null; } } //Setting the held items references to null implicitly means that there is no held item
         private PhysicsBody HeldItemBody { get; set; } = null;
         public IPickable HeldItemInterface { get; private set; } = null;
-        
 
-        //Nodes
+        //--Nodes
         private Camera FPCamera { get; set; }
         private Spatial HeadSpatial { get; set; }
         private Label TestSpeedLabel { get; set; }
         private Label TestFPSLabel { get; set; }
         private RayCast InteractRayCast { get; set; }
         private Position3D HeldItemPosition { get; set; }
+
+        //--UIs
+        private Control FirstPersonUI { get; set; }
+        private SettingsUI SettingsUI { get; set; }
 
         // - - - GD Methods - - -
         public override void _Ready()
@@ -46,10 +54,13 @@ namespace Game.Entities
 
             FPCamera = GetNode<Camera>("Head/Camera");
             HeadSpatial = GetNode<Spatial>("Head");
-            TestSpeedLabel = GetNode<Label>("Head/Camera/Direction/FPUI/SpeedLabel");
-            TestFPSLabel = GetNode<Label>("Head/Camera/Direction/FPUI/FPSLabel");
+            TestSpeedLabel = GetNode<Label>("Head/Camera/Direction/FirstPersonUI/SpeedLabel");
+            TestFPSLabel = GetNode<Label>("Head/Camera/Direction/FirstPersonUI/FPSLabel");
             InteractRayCast = GetNode<RayCast>("Head/InteractCast");
             HeldItemPosition = GetNode<Position3D>("Head/HeldItemPos");
+
+            FirstPersonUI = GetNode<Control>("Head/Camera/Direction/FirstPersonUI");
+            SettingsUI = GetNode<SettingsUI>("Head/Camera/Direction/SettingsUI");
 
             Input.SetMouseMode(Input.MouseMode.Captured);
         }
@@ -57,7 +68,6 @@ namespace Game.Entities
         public override void _Process(float delta)
         {
             base._Process(delta);
-
             TestFPSLabel.Text = $"FPS: {Engine.GetFramesPerSecond()}";
         }
 
@@ -73,7 +83,7 @@ namespace Game.Entities
             {
                 Transform trans = HeldItemBody.GlobalTransform;               
                 trans.origin = 
-                    FPCamera.GlobalTransform.origin + (-FPCamera.GlobalTransform.basis.z.Normalized() * ObjectGrabDistance);
+                    FPCamera.GlobalTransform.origin + (-FPCamera.GlobalTransform.basis.z.Normalized() * ObjectHoldDistance);
                 HeldItemBody.GlobalTransform = trans;
             }
         }
@@ -81,8 +91,11 @@ namespace Game.Entities
         public override void _Input(InputEvent @event)
         {
             base._Input(@event);
+
+            //UI Input
+            if (@event.IsActionPressed("ui_cancel")) { PauseAndShowSettings(); }
             //Capture mouse input for the camera
-            if(@event is InputEventMouseMotion && Input.GetMouseMode() == Input.MouseMode.Captured)
+            if (@event is InputEventMouseMotion && Input.GetMouseMode() == Input.MouseMode.Captured)
             {
                 ProcessRotation(@event as InputEventMouseMotion);
             }
@@ -95,6 +108,38 @@ namespace Game.Entities
                 { //Shoot weapon 
                 }
             }
+        }
+
+        // - - - UI Funtionality - - -
+        public void ApplySettings(SettingsUI sett, bool newChanges, bool unpause)
+        {
+            if(newChanges)
+            {
+                CameraFOV = sett.FOVSetting;
+                CameraSensitivity = sett.SensitivitySetting;
+                MoveSpeed = sett.PlayerMoveSpeedSetting;
+                JumpHeight = sett.PlayerJumpHeightSetting;
+                ObjectHoldDistance = sett.ObjectHoldDistanceSetting;
+            }
+
+            if (unpause) { UnpauseAndHideSettings(); }          
+        }
+
+        private void PauseAndShowSettings()
+        {
+            SettingsUI.ImportSettings(this);
+            SettingsUI.Visible = true;
+            FirstPersonUI.Visible = false;
+            Input.SetMouseMode(Input.MouseMode.Visible);
+            GetTree().Paused = true;
+        }
+
+        private void UnpauseAndHideSettings()
+        {
+            SettingsUI.Visible = false;
+            FirstPersonUI.Visible = true;
+            Input.SetMouseMode(Input.MouseMode.Captured);
+            GetTree().Paused = false;
         }
 
         // - - - Movement and FP Controller - - - 
@@ -142,8 +187,8 @@ namespace Game.Entities
 
         private void ProcessRotation(InputEventMouseMotion mouseMov)
         {
-            RotateY(Mathf.Deg2Rad(-mouseMov.Relative.x * CameraSpeed));
-            HeadSpatial.RotateX(Mathf.Deg2Rad(-mouseMov.Relative.y * CameraSpeed));
+            RotateY(Mathf.Deg2Rad(-mouseMov.Relative.x * CameraSensitivity));
+            HeadSpatial.RotateX(Mathf.Deg2Rad(-mouseMov.Relative.y * CameraSensitivity));
             //Clamp the x (up and down) rotation on the head so there cannot be any roll-over
             Vector3 headRotation = HeadSpatial.RotationDegrees;
             headRotation.x = Mathf.Clamp(headRotation.x, -70, 70);

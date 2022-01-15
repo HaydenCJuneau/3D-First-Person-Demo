@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Scenes/Testing/PlayerTestScene.cs" type="Script" id=1]
 [ext_resource path="res://Scenes/Props/Testing/Button.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Scripts/Objects/Testing/BallSpawner.cs" type="Script" id=3]
-
-[sub_resource type="SpatialMaterial" id=1]
-albedo_color = Color( 0.101961, 0.698039, 0.0666667, 1 )
+[ext_resource path="res://Scripts/Objects/Testing/PropSpawner.cs" type="Script" id=3]
+[ext_resource path="res://Textrues/testingTextureOrange.tres" type="Material" id=4]
+[ext_resource path="res://Textrues/testingTextureWhite.tres" type="Material" id=5]
 
 [sub_resource type="BoxShape" id=9]
 extents = Vector3( 50, 1, 50 )
@@ -33,7 +32,7 @@ script = ExtResource( 1 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0 )
 width = 100.0
 depth = 100.0
-material = SubResource( 1 )
+material = ExtResource( 4 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Floor"]
 shape = SubResource( 9 )
@@ -68,6 +67,7 @@ collision_layer = 0
 collision_mask = 19
 
 [node name="Box2" type="CSGBox" parent="HardBox"]
+material = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="HardBox"]
 shape = SubResource( 4 )
@@ -78,6 +78,7 @@ collision_layer = 0
 collision_mask = 19
 
 [node name="Box2" type="CSGBox" parent="HardBox2"]
+material = ExtResource( 5 )
 
 [node name="CollisionShape" type="CollisionShape" parent="HardBox2"]
 shape = SubResource( 4 )
@@ -85,21 +86,23 @@ shape = SubResource( 4 )
 [node name="Button" parent="." instance=ExtResource( 2 )]
 transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 1.5, 0 )
 Enabled = true
-PressCooldown = 2.0
-EventSenderID = "BallButton1"
+PressCooldown = 1.0
+EventSenderID = "BoxButton"
 
-[node name="BallSpawner" type="Spatial" parent="."]
+[node name="PropSpawner" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 0 )
 script = ExtResource( 3 )
-EventSenderID = "BallButton1"
+PropScenePath = "res://Scenes/Props/Testing/ColorBox.tscn"
+EventSenderID = "BoxButton"
 
 [node name="Button2" parent="." instance=ExtResource( 2 )]
-transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 1.5, 10 )
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 1.5, 4.75165 )
 Enabled = true
-PressCooldown = 2.0
-EventSenderID = "BallButton2"
+PressCooldown = 1.0
+EventSenderID = "BallButton"
 
-[node name="BallSpawner2" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 9.8815 )
+[node name="PropSpawner2" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 4.75165 )
 script = ExtResource( 3 )
-EventSenderID = "BallButton2"
+PropScenePath = "res://Scenes/Props/Testing/RainbowBall.tscn"
+EventSenderID = "BallButton"

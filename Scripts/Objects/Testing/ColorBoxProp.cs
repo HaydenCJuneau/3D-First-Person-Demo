@@ -30,7 +30,7 @@ namespace Game.Objects
         {
             base._Ready();
 
-            Box = GetNode<CSGBox>("Box2");
+            Box = GetNode<CSGBox>("Model");
         }
 
         public void Interact(object sender)

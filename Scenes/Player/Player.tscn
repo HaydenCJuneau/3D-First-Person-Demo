@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scripts/Player/Player.cs" type="Script" id=1]
 [ext_resource path="res://Textrues/crosshairs.png" type="Texture" id=2]
 [ext_resource path="res://Fonts/montserrat/Montserrat-Regular.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://Fonts/Montserrat.tres" type="DynamicFont" id=4]
+[ext_resource path="res://Scripts/Player/SettingsUI.cs" type="Script" id=5]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
@@ -17,6 +18,12 @@ albedo_color = Color( 1, 0, 0, 1 )
 [sub_resource type="DynamicFont" id=4]
 size = 75
 outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 20
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
 font_data = ExtResource( 3 )
 
 [node name="Player" type="KinematicBody"]
@@ -47,6 +54,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.373087, -0.407546, -0.750884 )
 
 [node name="Camera" type="Camera" parent="Head"]
+pause_mode = 2
 fov = 90.0
 
 [node name="Direction" type="CSGBox" parent="Head/Camera"]
@@ -103,7 +111,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureRect" type="TextureRect" parent="Head/Camera/Direction/FirstPersonUI/CenterContainer"]
+[node name="Crosshair" type="TextureRect" parent="Head/Camera/Direction/FirstPersonUI/CenterContainer"]
 margin_left = 960.0
 margin_top = 540.0
 margin_right = 960.0
@@ -116,8 +124,10 @@ __meta__ = {
 }
 
 [node name="SettingsUI" type="Control" parent="Head/Camera/Direction"]
+pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -137,3 +147,124 @@ text = "Resume"
 align = 1
 valign = 1
 clip_text = true
+
+[node name="ExitButton" type="Button" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 91.0
+margin_right = 192.0
+margin_bottom = 155.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text" type="Label" parent="Head/Camera/Direction/SettingsUI/ExitButton"]
+margin_right = 192.0
+margin_bottom = 64.0
+custom_fonts/font = ExtResource( 4 )
+text = "Quit Game"
+align = 1
+valign = 1
+clip_text = true
+
+[node name="ApplyButton" type="Button" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 992.0
+margin_right = 192.0
+margin_bottom = 1056.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text" type="Label" parent="Head/Camera/Direction/SettingsUI/ApplyButton"]
+margin_right = 192.0
+margin_bottom = 64.0
+custom_fonts/font = ExtResource( 4 )
+text = "Apply"
+align = 1
+valign = 1
+clip_text = true
+
+[node name="FOVBox" type="SpinBox" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 184.0
+margin_right = 320.0
+margin_bottom = 284.0
+min_value = 70.0
+max_value = 150.0
+value = 90.0
+rounded = true
+prefix = "FOV:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SensitivityBox" type="SpinBox" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 312.0
+margin_right = 320.0
+margin_bottom = 412.0
+prefix = "Sensitivity:"
+
+[node name="MoveSpeedBox" type="SpinBox" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 464.0
+margin_right = 320.0
+margin_bottom = 564.0
+max_value = 1.0
+rounded = true
+allow_greater = true
+prefix = "Move Speed:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JumpHeightBox" type="SpinBox" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 592.0
+margin_right = 320.0
+margin_bottom = 692.0
+max_value = 1.0
+rounded = true
+allow_greater = true
+prefix = "Jump Height:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HoldDistanceBox" type="SpinBox" parent="Head/Camera/Direction/SettingsUI"]
+margin_top = 720.0
+margin_right = 320.0
+margin_bottom = 820.0
+max_value = 1.0
+allow_greater = true
+prefix = "Move Speed:"
+
+[node name="SaveChangesDialog" type="PopupDialog" parent="Head/Camera/Direction/SettingsUI"]
+margin_right = 280.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 280, 128 )
+rect_scale = Vector2( 1.2, 1.2 )
+popup_exclusive = true
+
+[node name="Label" type="Label" parent="Head/Camera/Direction/SettingsUI/SaveChangesDialog"]
+margin_top = 8.0
+margin_right = 280.0
+margin_bottom = 64.0
+text = "Save changes to settings?"
+align = 1
+
+[node name="PopupSaveButton" type="Button" parent="Head/Camera/Direction/SettingsUI/SaveChangesDialog"]
+margin_left = 24.0
+margin_top = 80.0
+margin_right = 120.0
+margin_bottom = 112.0
+custom_fonts/font = SubResource( 5 )
+text = "Save"
+
+[node name="PopupCancelButton" type="Button" parent="Head/Camera/Direction/SettingsUI/SaveChangesDialog"]
+margin_left = 160.0
+margin_top = 80.0
+margin_right = 256.0
+margin_bottom = 112.0
+custom_fonts/font = SubResource( 5 )
+text = "Cancel"
+
+[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/ResumeButton" to="Head/Camera/Direction/SettingsUI" method="ResumeButtonPressed"]
+[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/ExitButton" to="Head/Camera/Direction/SettingsUI" method="ExitButtonPressed"]
+[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/ApplyButton" to="Head/Camera/Direction/SettingsUI" method="ApplyButtonPressed"]
+[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/SaveChangesDialog/PopupSaveButton" to="Head/Camera/Direction/SettingsUI" method="PopupSaveButtonPressed"]
+[connection signal="pressed" from="Head/Camera/Direction/SettingsUI/SaveChangesDialog/PopupCancelButton" to="Head/Camera/Direction/SettingsUI" method="PopupCanelButtonPressed"]

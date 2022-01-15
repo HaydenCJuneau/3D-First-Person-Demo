@@ -4,10 +4,11 @@ using Game.Scenes;
 
 namespace Game.Objects
 {
-    public class BallSpawner : Spatial
+    public class PropSpawner : Spatial
     {
         //--Scenes and nodes
-        private PackedScene BallScene { get; set; }
+        [Export] public string PropScenePath { get; private set; }
+        private PackedScene PropScene { get; set; }
         private SceneBase Base { get; set; }
         //--Event linking
         [Export] public string EventSenderID { get; private set; }
@@ -18,17 +19,17 @@ namespace Game.Objects
         {
             base._Ready();
 
-            BallScene = GD.Load<PackedScene>("res://Scenes/Props/Testing/RainbowBall.tscn");
+            PropScene = GD.Load<PackedScene>(PropScenePath);
             Base = SceneBase.FindBase(this);
             //Link events
-            Base.LinkEventByID(EventSenderID, SpawnBall);
+            Base.LinkEventByID(EventSenderID, SpawnProp);
         }
 
 
         // - - Event code - - 
-        public void SpawnBall()
+        public void SpawnProp()
         {
-            var instance = BallScene.Instance<RigidBody>();
+            var instance = PropScene.Instance<Spatial>();
             instance.Translation = Translation;
             Base.AddChild(instance, true);
         }
