@@ -14,7 +14,7 @@ namespace Game.Scenes
 
             PlayerScene = GD.Load<PackedScene>("res://Scenes/Player/Player.tscn");
 
-            var inst = PlayerScene.Instance() as Player;
+            var inst = PlayerScene.Instance<Player>();
             inst.Translation = new Vector3(0, 5, 0);
             
             AddChild(inst);

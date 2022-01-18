@@ -19,6 +19,7 @@ namespace Game.Scenes.UI
         //--State
         private bool ChangesMade { get; set; } = false;
 
+        //TODO: Make this system modular, use dictionaries so that editable settings to not have to be hard coded.
 
         //--Editable stats
         public int FOVSetting { get { return (int)FOVBox.Value; } }
@@ -52,9 +53,12 @@ namespace Game.Scenes.UI
         public override void _Input(InputEvent @event)
         {
             base._Input(@event);
-            //TODO: Make it so settings can be exited with ui_cancel, right now it closes the UI but then the player
-            //picks up on the input and loops directly back to the UI opening
-            //if (Visible && @event.IsActionPressed("ui_cancel")) { ResumeButtonPressed(); }
+
+            if (Visible && @event.IsActionPressed("ui_cancel")) 
+            {
+                GetTree().SetInputAsHandled();
+                ResumeButtonPressed();
+            }
         }
 
         // - - Importing and managing settings data - - 

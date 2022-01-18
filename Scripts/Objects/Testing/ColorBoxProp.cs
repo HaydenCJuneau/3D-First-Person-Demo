@@ -6,23 +6,23 @@ namespace Game.Objects
 {
     public class ColorBoxProp : RigidBody, IInteractable
     {
-        //The CSG Box of the cube
-        private CSGBox Box { get; set; }
-        //The cubes color value
+        //--Cube Model
+        private CSGBox Model { get; set; }
+        //--Properties
         private Color CubeColor
         {
             get {
-                var box = Box ?? GetNode<CSGBox>("Model");
+                var box = Model ?? GetNode<CSGBox>("Model");
                 var mat = box.Material as SpatialMaterial;
                 return mat.AlbedoColor;
             }
             set {
-                var box = Box ?? GetNode<CSGBox>("Model");
+                var box = Model ?? GetNode<CSGBox>("Model");
                 var mat = box.Material as SpatialMaterial;
                 mat.AlbedoColor = value;
             }
         }
-        //Random
+        //--RNG
         private Random rng = new Random();
 
         // - - - GD methods - - - 
@@ -30,12 +30,11 @@ namespace Game.Objects
         {
             base._Ready();
 
-            Box = GetNode<CSGBox>("Model");
+            Model = GetNode<CSGBox>("Model");
         }
 
         public void Interact(object sender)
         {
-            GD.Print($"{nameof(sender)} interacted with cube!");
             CubeColor = new Color((float)rng.NextDouble(), (float)rng.NextDouble(), (float)rng.NextDouble());
         }
     }

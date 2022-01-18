@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/tomato.obj-0e046406cf4841c1c86e1bc6480fc749.mesh"
+
+[deps]
+
+files=[ "res://.import/tomato.obj-0e046406cf4841c1c86e1bc6480fc749.mesh" ]
+
+source_file="res://Models/Sandwich/tomato.obj"
+dest_files=[ "res://.import/tomato.obj-0e046406cf4841c1c86e1bc6480fc749.mesh", "res://.import/tomato.obj-0e046406cf4841c1c86e1bc6480fc749.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

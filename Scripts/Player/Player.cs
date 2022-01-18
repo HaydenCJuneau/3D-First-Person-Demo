@@ -30,15 +30,14 @@ namespace Game.Entities
 
         //--Interactivity values
         public float ObjectThrowForce { get; private set; } = 120;
-        public float ObjectHoldDistance { get; private set; } = 5;
-        public bool HoldingItem { get { return HeldItemInterface != null; } } //Setting the held items references to null implicitly means that there is no held item
-        private PhysicsBody HeldItemBody { get; set; } = null;
+        public float ObjectHoldDistance { get; private set; } = 3;
+        public bool HoldingItem { get { return HeldItemInterface != null; } }
+        private RigidBody HeldItemBody { get; set; } = null;
         public IPickable HeldItemInterface { get; private set; } = null;
 
         //--Nodes
         private Camera FPCamera { get; set; }
         private Spatial HeadSpatial { get; set; }
-        private Label TestSpeedLabel { get; set; }
         private Label TestFPSLabel { get; set; }
         private RayCast InteractRayCast { get; set; }
         private Position3D HeldItemPosition { get; set; }
@@ -54,7 +53,6 @@ namespace Game.Entities
 
             FPCamera = GetNode<Camera>("Head/Camera");
             HeadSpatial = GetNode<Spatial>("Head");
-            TestSpeedLabel = GetNode<Label>("Head/Camera/Direction/FirstPersonUI/SpeedLabel");
             TestFPSLabel = GetNode<Label>("Head/Camera/Direction/FirstPersonUI/FPSLabel");
             InteractRayCast = GetNode<RayCast>("Head/InteractCast");
             HeldItemPosition = GetNode<Position3D>("Head/HeldItemPos");
@@ -68,7 +66,11 @@ namespace Game.Entities
         public override void _Process(float delta)
         {
             base._Process(delta);
-            TestFPSLabel.Text = $"FPS: {Engine.GetFramesPerSecond()}";
+
+            //Print data to the testing label
+            var tSpeed = ((int)TickVelocity.Length());
+            TestFPSLabel.Text = $"FPS: { Engine.GetFramesPerSecond() }\nSpeed: {tSpeed}";
+            if(HoldingItem) { TestFPSLabel.Text += $"\nObjDist: { GetHeldObjectDistance() }"; }   
         }
 
         public override void _PhysicsProcess(float delta)
@@ -77,14 +79,15 @@ namespace Game.Entities
 
             ProcessMovement(delta);
 
-            //If there is an actively held item, it should be coaxed to move to the held item position.
-            //This might need to move to its own method as it is outside of the scope of physics process
-            if (HoldingItem)
+            if(HoldingItem)
             {
-                Transform trans = HeldItemBody.GlobalTransform;               
-                trans.origin = 
-                    FPCamera.GlobalTransform.origin + (-FPCamera.GlobalTransform.basis.z.Normalized() * ObjectHoldDistance);
-                HeldItemBody.GlobalTransform = trans;
+                Vector3 carryPos = FPCamera.GlobalTransform.origin + (-FPCamera.GlobalTransform.basis.z.Normalized() * ObjectHoldDistance);
+                Vector3 moveDirection = carryPos - HeldItemBody.GlobalTransform.origin;
+                HeldItemBody.AddCentralForce(moveDirection * 800);
+                //Rotation
+                HeldItemBody.AddTorque((Rotation - HeldItemBody.Rotation) * 10);
+                //Drop the object if it is stuck too far away
+                if(GetHeldObjectDistance() > 4.5) { DropObject(); }
             }
         }
 
@@ -92,16 +95,14 @@ namespace Game.Entities
         {
             base._Input(@event);
 
-            //UI Input
-            if (@event.IsActionPressed("ui_cancel")) { PauseAndShowSettings(); }
             //Capture mouse input for the camera
             if (@event is InputEventMouseMotion && Input.GetMouseMode() == Input.MouseMode.Captured)
             {
                 ProcessRotation(@event as InputEventMouseMotion);
             }
-            //Capture keypresses
+            //Gameplay input
             if (@event.IsActionPressed("interact_grab")) { ProcessInteract(); }
-            if (@event.IsActionPressed("combat_fireweapon")) 
+            if (@event.IsActionPressed("combat_fireweapon"))
             {
                 if (HoldingItem) { ThrowObject(); }
                 else
@@ -110,7 +111,16 @@ namespace Game.Entities
             }
         }
 
-        // - - - UI Funtionality - - -
+        //Use the unhandled input method for anything that should be consumed by the GUI first
+        public override void _UnhandledKeyInput(InputEventKey @event)
+        {
+            base._UnhandledKeyInput(@event);
+
+            //UI Input
+            if (@event.IsActionPressed("ui_cancel")) { PauseAndShowSettings(); } 
+        }
+
+        // - - - UI funtionality & pausing - - -
         public void ApplySettings(SettingsUI sett, bool newChanges, bool unpause)
         {
             if(newChanges)
@@ -179,9 +189,6 @@ namespace Game.Entities
                 TickVelocity = MoveAndSlide(TickVelocity, Vector3.Up);
             }
 
-            //Test label
-            TestSpeedLabel.Text = ((int)TickVelocity.Length()).ToString() + " m/sec\n" + TickOnFloor;
-
             TickOnFloor = IsOnFloor(); //Always call IsOnFloor() after moveand* is called
         }
 
@@ -217,12 +224,11 @@ namespace Game.Entities
                 else if(collider is IPickable)
                 {
                     var pickable = collider as IPickable;
-                    PhysicsBody body = null;
+                    RigidBody body = null;
                     if (pickable.RequestPickup(out body, this))
                     {
-                        HeldItemBody = body;
-                        HeldItemInterface = pickable;
-                        GrabObject(body); 
+                        
+                        GrabObject(body, pickable); 
                     }
                     else 
                     {
@@ -233,19 +239,23 @@ namespace Game.Entities
             }
         }
 
-        private void GrabObject(PhysicsBody body)
+        private void GrabObject(RigidBody body, IPickable pick)
         {
-            body.GlobalTransform = HeldItemPosition.GlobalTransform;
+            //Logic
+            HeldItemBody = body;
+            HeldItemInterface = pick;
+            //Physics
+            HeldItemBody.LinearDamp = 35;
+            HeldItemBody.AngularDamp = 40;
         }
 
-        private void ThrowObject()
+        private void ThrowObject() //TODO: adding impulse should be done by this script, not the physics objects script
         {
-            var throwAccept =
-                HeldItemInterface.RequestThrow(this, Vector3.Zero, -FPCamera.GlobalTransform.basis.z.Normalized() * ObjectThrowForce);
-            if (throwAccept)
+            if (HeldItemInterface.RequestThrow(this))
             {
-                HeldItemBody = null;
-                HeldItemInterface = null;
+                var impulse = -FPCamera.GlobalTransform.basis.z.Normalized() * ObjectThrowForce;
+                HeldItemBody.ApplyImpulse(Vector3.Zero, impulse);
+                DropObject();
             }
             else
             {
@@ -255,8 +265,20 @@ namespace Game.Entities
 
         private void DropObject()
         {
+            //Physics 
+            HeldItemBody.LinearDamp = -1;
+            HeldItemBody.AngularDamp = -1;
+            HeldItemBody.AddCentralForce(-HeldItemBody.LinearVelocity * 35);
+            //Logic 
             HeldItemBody = null;
             HeldItemInterface = null;
+        }
+
+        private float GetHeldObjectDistance()
+        {
+            if (!HoldingItem) { return 0; }
+            Vector3 carryPos = FPCamera.GlobalTransform.origin + (-FPCamera.GlobalTransform.basis.z.Normalized() * ObjectHoldDistance);
+            return HeldItemBody.GlobalTransform.origin.DistanceTo(carryPos);
         }
     }   
 }

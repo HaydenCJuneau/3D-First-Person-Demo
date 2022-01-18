@@ -6,9 +6,10 @@ namespace Game.Objects
 {
     public class RainbowBallProp : RigidBody, IPickable
     {
-        //The CSG Box of the cube
+        //--Nodes
         private CSGSphere Model { get; set; }
-        //The cubes color value
+        //--Control values
+        private float ElapsedTime { get; set; } = 0f;
         private Color MeshColor
         {
             get {
@@ -22,10 +23,6 @@ namespace Game.Objects
                 mat.AlbedoColor = value;
             }
         }
-        //Random
-        private Random rng = new Random();
-        //Float for elapsed time
-        private float ElapsedTime = 0f;
 
         // - - - GD methods - - - 
         public override void _Ready()
@@ -46,26 +43,19 @@ namespace Game.Objects
         }
 
         // - - Object pickup - - 
-        public bool RequestPickup(out PhysicsBody body, object sender)
+        public bool RequestPickup(out RigidBody body, object sender)
         {
             body = this;
-            Mode = ModeEnum.Static;
-            GD.Print($"Ball picked up by {nameof(sender)}");
             return true;
         }
 
         public bool RequestDrop(object sender)
         {
-            Mode = ModeEnum.Rigid;
-            GD.Print($"Ball dropped by {nameof(sender)}");
             return true;
         }
 
-        public bool RequestThrow(object sender, Vector3 impulsePosition, Vector3 impulse)
+        public bool RequestThrow(object sender)
         {
-            Mode = ModeEnum.Rigid;
-            ApplyImpulse(impulsePosition, impulse);
-            GD.Print($"Ball thrown by {nameof(sender)}");
             return true;
         }
     }
