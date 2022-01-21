@@ -4,8 +4,18 @@ using Game.Systems.Interaction;
 
 namespace Game.Sandwich.Objects
 {
-    public class ToppingIngredient : RigidBody, IPickable
+    //Toppings are ingredients that do not have their own behavior and just act as parts of items.
+    public class ToppingIngredient : Ingredient, IPickable
     {
+
+        // - - Model - - 
+        public override void SetIngredient(IngredientType type)
+        {
+            if(type == IngredientType.TopBun) { GetNode<CollisionShape>("BunHitbox").Disabled = false; }
+            else { GetNode<CollisionShape>("ToppingHitbox").Disabled = false; }
+
+            base.SetIngredient(type);
+        }
 
         // - - Interactivity - - 
         public bool RequestDrop(object sender)

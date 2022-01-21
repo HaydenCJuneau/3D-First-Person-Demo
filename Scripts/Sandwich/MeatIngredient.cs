@@ -4,8 +4,10 @@ using Game.Systems.Interaction;
 
 namespace Game.Sandwich.Objects
 {
-    public class MeatIngredient : RigidBody, IPickable
+    //Meat ingredients can be cooked in stoves or fryers so they need their own script for behavior
+    public class MeatIngredient : Ingredient, IPickable
     {
+        
 
         // - - Interactivity - - 
         public bool RequestDrop(object sender)

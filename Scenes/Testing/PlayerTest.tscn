@@ -122,14 +122,3 @@ EventSenderID = "BallButton"
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
 PropScenePath = "res://Scenes/Props/Testing/RainbowBall.tscn"
 EventSenderID = "BallButton"
-
-[node name="Button3" parent="." instance=ExtResource( 2 )]
-transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 1.5, -5 )
-Enabled = true
-PressCooldown = 0.5
-EventSenderID = "BunButton"
-
-[node name="PropSpawner2" parent="." instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, -5 )
-PropScenePath = "res://Scenes/Sandwich/Props/TopBunIngredient.tscn"
-EventSenderID = "BunButton"

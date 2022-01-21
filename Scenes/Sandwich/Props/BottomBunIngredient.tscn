@@ -10,10 +10,18 @@ extents = Vector3( 0.3, 0.1, 0.3 )
 collision_layer = 24
 collision_mask = 17
 continuous_cd = true
+contacts_reported = 4
+contact_monitor = true
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource( 1 )
+
+[node name="IngredientCast" type="RayCast" parent="."]
+transform = Transform( 0.999999, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0 )
+enabled = true
+cast_to = Vector3( 0, 0.3, 0 )
+collision_mask = 32
 
 [node name="Hitbox" type="CollisionShape" parent="."]
 shape = SubResource( 1 )
@@ -26,8 +34,4 @@ transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.481119, -0.0992795, -0
 mesh = ExtResource( 2 )
 material/0 = null
 
-[node name="IngredientCast" type="RayCast" parent="."]
-transform = Transform( 0.999999, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0 )
-enabled = true
-cast_to = Vector3( 0, 0.5, 0 )
-collision_mask = 32
+[connection signal="body_entered" from="." to="." method="OnCollisionBodyEntered"]
