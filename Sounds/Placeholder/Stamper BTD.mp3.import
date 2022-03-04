@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Stamper BTD.mp3-b479f24be26910c302b4d716ffcc7c74.mp3str"
+
+[deps]
+
+source_file="res://Sounds/Placeholder/Stamper BTD.mp3"
+dest_files=[ "res://.import/Stamper BTD.mp3-b479f24be26910c302b4d716ffcc7c74.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

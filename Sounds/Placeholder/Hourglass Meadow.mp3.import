@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Hourglass Meadow.mp3-eb52bce4817d27f0ea9c02ccf433e266.mp3str"
+
+[deps]
+
+source_file="res://Sounds/Placeholder/Hourglass Meadow.mp3"
+dest_files=[ "res://.import/Hourglass Meadow.mp3-eb52bce4817d27f0ea9c02ccf433e266.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

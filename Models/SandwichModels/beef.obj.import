@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/beef.obj-507fbde7af5dc50f360e3daa0fa1ef00.mesh"
+
+[deps]
+
+files=[ "res://.import/beef.obj-507fbde7af5dc50f360e3daa0fa1ef00.mesh" ]
+
+source_file="res://Models/SandwichModels/beef.obj"
+dest_files=[ "res://.import/beef.obj-507fbde7af5dc50f360e3daa0fa1ef00.mesh", "res://.import/beef.obj-507fbde7af5dc50f360e3daa0fa1ef00.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

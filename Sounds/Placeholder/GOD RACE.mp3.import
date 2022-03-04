@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/GOD RACE.mp3-e409fd846efab887d3cb1d190a55a664.mp3str"
+
+[deps]
+
+source_file="res://Sounds/Placeholder/GOD RACE.mp3"
+dest_files=[ "res://.import/GOD RACE.mp3-e409fd846efab887d3cb1d190a55a664.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

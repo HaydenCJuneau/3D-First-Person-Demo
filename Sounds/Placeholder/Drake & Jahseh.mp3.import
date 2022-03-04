@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Drake & Jahseh.mp3-f752f8f71b28f9fe8fd665de34111bdd.mp3str"
+
+[deps]
+
+source_file="res://Sounds/Placeholder/Drake & Jahseh.mp3"
+dest_files=[ "res://.import/Drake & Jahseh.mp3-f752f8f71b28f9fe8fd665de34111bdd.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

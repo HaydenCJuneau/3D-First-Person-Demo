@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Cybergrind.wav-98c427f540c38ca243a5322ed1d85172.sample"
+
+[deps]
+
+source_file="res://Sounds/Placeholder/Cybergrind.wav"
+dest_files=[ "res://.import/Cybergrind.wav-98c427f540c38ca243a5322ed1d85172.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
